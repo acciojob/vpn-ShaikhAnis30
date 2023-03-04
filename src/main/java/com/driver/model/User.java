@@ -19,13 +19,13 @@ public class User {
 
     private String maskedIp;
 
-    private boolean connected;
+    private Boolean connected;
 
     //Mappings
 
     //from user(Parent) to country
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Country country;
+    private Country originalCountry;
 
     //form users(child) to ServiceProviders
     @ManyToMany
@@ -87,12 +87,12 @@ public class User {
         this.connected = connected;
     }
 
-    public Country getCountry() {
-        return country;
+    public Country getOriginalCountry() {
+        return originalCountry;
     }
 
-    public void setCountry(Country country) {
-        this.country = country;
+    public void setOriginalCountry(Country originalCountry) {
+        this.originalCountry = originalCountry;
     }
 
     public List<ServiceProvider> getServiceProviderList() {

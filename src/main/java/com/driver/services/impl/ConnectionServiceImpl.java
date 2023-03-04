@@ -5,7 +5,6 @@ import com.driver.repository.ConnectionRepository;
 import com.driver.repository.ServiceProviderRepository;
 import com.driver.repository.UserRepository;
 import com.driver.services.ConnectionService;
-import org.hibernate.internal.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         User user = userRepository2.findById(userId).get();
         if(user.isConnected()) throw new Exception("Already connected");
 
-        String countryNameOfUser = user.getCountry().getCountryName().toString();
+        String countryNameOfUser = user.getOriginalCountry().getCountryName().toString();
         if(countryName.equals(countryNameOfUser)) {
             return user;
         }
@@ -84,7 +83,7 @@ public class ConnectionServiceImpl implements ConnectionService {
             //I will fetch country form maskIp
             String countryCode = receiver.getMaskedIp().substring(0,3);
 
-            if(sender.getCountry().getCode().equals(countryCode))
+            if(sender.getOriginalCountry().getCode().equals(countryCode))
                 return sender; //they can communicate
             else {
                 //now I have to connect sender country to receiver country
@@ -107,8 +106,8 @@ public class ConnectionServiceImpl implements ConnectionService {
             }
 
         }else{
-            String receiverCountryName = receiver.getCountry().getCountryName().toString();
-            if(receiverCountryName.equals(sender.getCountry().getCountryName().toString()))
+            String receiverCountryName = receiver.getOriginalCountry().getCountryName().toString();
+            if(receiverCountryName.equals(sender.getOriginalCountry().getCountryName().toString()))
                 return sender;
             else {
                 sender = connect(senderId, receiverCountryName);

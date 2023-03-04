@@ -11,8 +11,6 @@ import com.driver.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -36,27 +34,27 @@ public class UserServiceImpl implements UserService {
         if(countryName.equals("IND")) {
             country.setCountryName(CountryName.IND);
             country.setCode(CountryName.IND.toCode());
-            user.setCountry(country);
+            user.setOriginalCountry(country);
             user.setOriginalIp(country.getCode() + "." + userRepository3.save(user).getId());
         }else if(countryName.equals("USA")) {
             country.setCountryName(CountryName.USA);
             country.setCode(CountryName.USA.toCode());
-            user.setCountry(country);
+            user.setOriginalCountry(country);
             user.setOriginalIp(country.getCode() + "." + userRepository3.save(user).getId());
         }else if(countryName.equals("AUS")) {
             country.setCountryName(CountryName.AUS);
             country.setCode(CountryName.AUS.toCode());
-            user.setCountry(country);
+            user.setOriginalCountry(country);
             user.setOriginalIp(country.getCode() + "." + userRepository3.save(user).getId());
         }else if(countryName.equals("JPN")) {
             country.setCountryName(CountryName.JPN);
             country.setCode(CountryName.JPN.toCode());
-            user.setCountry(country);
+            user.setOriginalCountry(country);
             user.setOriginalIp(country.getCode() + "." + userRepository3.save(user).getId());
         }else if(countryName.equals("CHI")) {
             country.setCountryName(CountryName.CHI);
             country.setCode(CountryName.CHI.toCode());
-            user.setCountry(country);
+            user.setOriginalCountry(country);
             user.setOriginalIp(country.getCode() + "." + userRepository3.save(user).getId());
         }else {
             throw new Exception("Country not found");
@@ -75,7 +73,7 @@ public class UserServiceImpl implements UserService {
 //        serviceProviderList.add(serviceProvider);
 //        user.setServiceProviderList(serviceProviderList);
         user.getServiceProviderList().add(serviceProvider);
-        serviceProvider.getUserList().add(user);
+        serviceProvider.getUsers().add(user);
 
         serviceProviderRepository3.save(serviceProvider);//considered serviceProvider as parent
         return user;
