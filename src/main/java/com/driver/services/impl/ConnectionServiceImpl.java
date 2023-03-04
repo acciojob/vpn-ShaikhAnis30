@@ -24,7 +24,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public User connect(int userId, String countryName) throws Exception{
         User user = userRepository2.findById(userId).get();
-        if(user.isConnected()) throw new Exception("Already connected");
+        if(user.getConnected()) throw new Exception("Already connected");
 
         String countryNameOfUser = user.getOriginalCountry().getCountryName().toString();
         if(countryName.equals(countryNameOfUser)) {
@@ -67,7 +67,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public User disconnect(int userId) throws Exception {
         User user = userRepository2.findById(userId).get();
-        if(!user.isConnected()) throw new Exception("Already disconnected");
+        if(!user.getConnected()) throw new Exception("Already disconnected");
 
         user.setMaskedIp(null);
         user.setConnected(false);
@@ -79,7 +79,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         User sender = userRepository2.findById(senderId).get();
         User receiver = userRepository2.findById(receiverId).get();
 
-        if(receiver.isConnected()) {
+        if(receiver.getConnected()) {
             //I will fetch country form maskIp
             String countryCode = receiver.getMaskedIp().substring(0,3);
 
@@ -101,7 +101,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                     countryNameOfReceiver = CountryName.JPN.toString();
 
                 sender = connect(senderId, countryNameOfReceiver);
-                if(!sender.isConnected()) throw new Exception("Cannot establish communication");
+                if(!sender.getConnected()) throw new Exception("Cannot establish communication");
                 else return sender;
             }
 
@@ -111,7 +111,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                 return sender;
             else {
                 sender = connect(senderId, receiverCountryName);
-                if(!sender.isConnected()) throw new Exception("Cannot establish communication");
+                if(!sender.getConnected()) throw new Exception("Cannot establish communication");
                 else return sender;
             }
         }
