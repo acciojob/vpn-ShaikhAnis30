@@ -22,45 +22,46 @@ public class ConnectionServiceImpl implements ConnectionService {
     ConnectionRepository connectionRepository2;
 
     @Override
-    public User connect(int userId, String countryName) throws Exception{
+    public User connect(int userId, String countryName) throws Exception {
         User user = userRepository2.findById(userId).get();
-        if(user.getConnected()) throw new Exception("Already connected");
+        if(user.getMaskedIp() != null) throw new Exception("Already connected");
 
-        String countryNameOfUser = user.getOriginalCountry().getCountryName().toString();
-        if(countryName.equals(countryNameOfUser)) {
+        else if(countryName.equals(user.getOriginalCountry().getCountryName().toString())) {
             return user;
         }
 
-        if(user.getServiceProviderList() == null) throw new Exception("Unable to connect");
+        else {
+            if (user.getServiceProviderList() == null) throw new Exception("Unable to connect");
 
-        List<ServiceProvider> serviceProviderList = user.getServiceProviderList();
+            List<ServiceProvider> serviceProviderList = user.getServiceProviderList();
 
-        ServiceProvider dummyServiceProvider = null;
-        int id = Integer.MAX_VALUE;
-        Country dummyCountry = null;
-        for (ServiceProvider serviceProvider : serviceProviderList) {
-            List<Country> countryList = serviceProvider.getCountryList();
-            for(Country country : countryList) {
-                if(countryName.equals(country.getCountryName().toString()) && serviceProvider.getId() < id) {
-                    id = serviceProvider.getId();
-                    dummyServiceProvider = serviceProvider;
-                    dummyCountry = country;
+            ServiceProvider dummyServiceProvider = null;
+            int id = Integer.MAX_VALUE;
+            Country dummyCountry = null;
+            for (ServiceProvider serviceProvider : serviceProviderList) {
+                List<Country> countryList = serviceProvider.getCountryList();
+                for (Country country : countryList) {
+                    if (countryName.equals(country.getCountryName().toString()) && serviceProvider.getId() < id) {
+                        id = serviceProvider.getId();
+                        dummyServiceProvider = serviceProvider;
+                        dummyCountry = country;
+                    }
                 }
             }
-        }
 
-        if(dummyServiceProvider != null) {
-            Connection connection = new Connection();
-            connection.setUser(user);
-            connection.setServiceProvider(dummyServiceProvider);
+            if (dummyServiceProvider != null) {
+                Connection connection = new Connection();
+                connection.setUser(user);
+                connection.setServiceProvider(dummyServiceProvider);
 
-            user.getConnectionList().add(connection);
-            dummyServiceProvider.getConnectionList().add(connection);
-            user.setMaskedIp(dummyCountry.getCode() + "." + dummyServiceProvider.getId() + "." + userId);
-            user.setConnected(true);
+                user.getConnectionList().add(connection);
+                dummyServiceProvider.getConnectionList().add(connection);
+                user.setMaskedIp(dummyCountry.getCode() + "." + dummyServiceProvider.getId() + "." + userId);
+                user.setConnected(true);
 
-            userRepository2.save(user);
-            serviceProviderRepository2.save(dummyServiceProvider);
+                userRepository2.save(user);
+                serviceProviderRepository2.save(dummyServiceProvider);
+            }
         }
         return user;
     }
