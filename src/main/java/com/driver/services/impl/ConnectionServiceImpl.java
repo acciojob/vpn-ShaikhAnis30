@@ -66,54 +66,45 @@ public class ConnectionServiceImpl implements ConnectionService {
 //        return user;
 
         User user = userRepository2.findById(userId).get();
-        if(user.getMaskedIp()!=null){
+        if(user.getConnected()){
             throw new Exception("Already connected");
         }
         else if(countryName.equalsIgnoreCase(user.getOriginalCountry().getCountryName().toString())){
             return user;
         }
         else {
-            if (user.getServiceProviderList()==null){
-                throw new Exception("Unable to connect");
-            }
+            if (user.getServiceProviderList() == null) throw new Exception("Unable to connect");
 
             List<ServiceProvider> serviceProviderList = user.getServiceProviderList();
-            int a = Integer.MAX_VALUE;
-            ServiceProvider serviceProvider = null;
-            Country country =null;
+            int id = Integer.MAX_VALUE;
+            ServiceProvider dummyServiceProvider = null;
+            Country dummyCountry =null;
 
-            for(ServiceProvider serviceProvider1:serviceProviderList){
-
-                List<Country> countryList = serviceProvider1.getCountryList();
-
-                for (Country country1: countryList){
-
-                    if(countryName.equalsIgnoreCase(country1.getCountryName().toString()) && a > serviceProvider1.getId() ){
-                        a=serviceProvider1.getId();
-                        serviceProvider=serviceProvider1;
-                        country=country1;
+            for(ServiceProvider serviceProvider:serviceProviderList){
+                List<Country> countryList = serviceProvider.getCountryList();
+                for (Country country: countryList){
+                    if(countryName.equalsIgnoreCase(country.getCountryName().toString()) && id > serviceProvider.getId() ){
+                        id = serviceProvider.getId();
+                        dummyServiceProvider = serviceProvider;
+                        dummyCountry = country;
                     }
                 }
             }
-            if (serviceProvider!=null){
+            if (dummyServiceProvider != null){
                 Connection connection = new Connection();
                 connection.setUser(user);
-                connection.setServiceProvider(serviceProvider);
+                connection.setServiceProvider(dummyServiceProvider);
 
-                String cc = country.getCode();
-                int givenId = serviceProvider.getId();
-                String mask = cc+"."+givenId+"."+userId;
+                String maskIp = dummyCountry.getCode() + "." + dummyServiceProvider.getId() + "." + userId;
 
-                user.setMaskedIp(mask);
+                user.setMaskedIp(maskIp);
                 user.setConnected(true);
                 user.getConnectionList().add(connection);
 
-                serviceProvider.getConnectionList().add(connection);
+                dummyServiceProvider.getConnectionList().add(connection);
 
                 userRepository2.save(user);
-                serviceProviderRepository2.save(serviceProvider);
-
-
+                serviceProviderRepository2.save(dummyServiceProvider);
             }
         }
         return user;
