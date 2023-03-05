@@ -23,53 +23,11 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Override
     public User connect(int userId, String countryName) throws Exception {
-//        User user = userRepository2.findById(userId).get();
-//        if(user.getMaskedIp() != null) throw new Exception("Already connected");
-//
-//        else if(countryName.equals(user.getOriginalCountry().getCountryName().toString())) {
-//            return user;
-//        }
-//
-//        else {
-//            if (user.getServiceProviderList() == null) throw new Exception("Unable to connect");
-//
-//            List<ServiceProvider> serviceProviderList = user.getServiceProviderList();
-//
-//            ServiceProvider dummyServiceProvider = null;
-//            int id = Integer.MAX_VALUE;
-//            Country dummyCountry = null;
-//            for (ServiceProvider serviceProvider : serviceProviderList) { //this service provider
-//                List<Country> countryList = serviceProvider.getCountryList(); //serving these countries
-//                for (Country country : countryList) {
-//                    if (countryName.equals(country.getCountryName().toString()) && serviceProvider.getId() < id) {
-//                        id = serviceProvider.getId();
-//                        dummyServiceProvider = serviceProvider;
-//                        dummyCountry = country;
-//                    }
-//                }
-//            }
-//
-//            if (dummyServiceProvider != null) {
-//                Connection connection = new Connection();
-//                connection.setUser(user);
-//                connection.setServiceProvider(dummyServiceProvider);
-//
-//                user.getConnectionList().add(connection);
-//                dummyServiceProvider.getConnectionList().add(connection);
-//                user.setMaskedIp(dummyCountry.getCode() + "." + dummyServiceProvider.getId() + "." + userId);
-//                user.setConnected(true);
-//
-//                userRepository2.save(user);
-//                serviceProviderRepository2.save(dummyServiceProvider);
-//            }
-//        }
-//        return user;
-
         User user = userRepository2.findById(userId).get();
         if(user.getConnected()){
             throw new Exception("Already connected");
         }
-        else if(countryName.equalsIgnoreCase(user.getOriginalCountry().getCountryName().toString())){
+        else if(countryName.equals(user.getOriginalCountry().getCountryName().toString())){
             return user;
         }
         else {
@@ -83,7 +41,7 @@ public class ConnectionServiceImpl implements ConnectionService {
             for(ServiceProvider serviceProvider:serviceProviderList){
                 List<Country> countryList = serviceProvider.getCountryList();
                 for (Country country: countryList){
-                    if(countryName.equalsIgnoreCase(country.getCountryName().toString()) && id > serviceProvider.getId() ){
+                    if(countryName.equals(country.getCountryName().toString()) && id > serviceProvider.getId() ){
                         id = serviceProvider.getId();
                         dummyServiceProvider = serviceProvider;
                         dummyCountry = country;
