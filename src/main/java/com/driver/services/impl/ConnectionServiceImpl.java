@@ -101,9 +101,9 @@ public class ConnectionServiceImpl implements ConnectionService {
                 else if(countryCode.equals("005"))
                     countryNameOfReceiver = CountryName.JPN.toString();
 
-                User newSender = connect(senderId, countryNameOfReceiver);
-                if(!newSender.getConnected()) throw new Exception("Cannot establish communication");
-                else return newSender;
+                sender = connect(senderId, countryNameOfReceiver);
+                if(!sender.getConnected()) throw new Exception("Cannot establish communication");
+                else return sender;
             }
 
         }else{
@@ -111,9 +111,9 @@ public class ConnectionServiceImpl implements ConnectionService {
             if(receiverCountryName.equals(sender.getOriginalCountry().getCountryName().toString()))
                 return sender;
             else {
-                User newSender = connect(senderId, receiverCountryName);
-                if(!newSender.getConnected()) throw new Exception("Cannot establish communication");
-                else return newSender;
+                sender = connect(senderId, receiverCountryName);
+                if(!sender.getConnected()) throw new Exception("Cannot establish communication");
+                else return sender;
             }
         }
     }
